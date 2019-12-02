@@ -18,9 +18,7 @@ class ISCSO2019(Problem):
     def _evaluate(self, X, out, *args, **kwargs):
         eng = MatlabEngine.get_instance()
 
-        # eng = matlab.engine.start_matlab()
-
-        mat_X = matlab.int8(X.astype(np.int).tolist())
+        mat_X = matlab.int32(X.astype(np.int).tolist())
         f, g1, g2 = eng.evaluate(mat_X, nargout=3)
 
         out["F"] = np.array(f)
