@@ -9,7 +9,7 @@ class MatlabEngine:
     @staticmethod
     def get_instance():
         if MatlabEngine.__instance is None:
-            MatlabEngine.__instance = matlab.engine.start_matlab()
+            MatlabEngine.__instance = matlab.engine.start_matlab(option="")
 
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'matlab'))
         MatlabEngine.__instance.addpath(path, nargout=0)

@@ -7,11 +7,15 @@ from iscso19.matlabengine import MatlabEngine
 
 class ISCSO2019(Problem):
 
-    def __init__(self):
+    def __init__(self, penalty=None):
         self.n_sections = 260
         self.n_coords = 10
-        super().__init__(n_var=self.n_sections + self.n_coords, n_obj=1, n_constr=2, type_var=np.int)
+        self.penalty = penalty
 
+
+        super().__init__(n_var=self.n_sections + self.n_coords, n_obj=1, type_var=np.int)
+
+        self.n_constr = 2 if self.penalty is None else 0
         self.xl = np.concatenate([np.ones(self.n_sections), np.full(self.n_coords, -25000)]).astype(np.int)
         self.xu = np.concatenate([np.full(self.n_sections, 37), np.full(self.n_coords, 3500)]).astype(np.int)
 
@@ -21,8 +25,16 @@ class ISCSO2019(Problem):
         mat_X = matlab.int32(X.astype(np.int).tolist())
         f, g1, g2 = eng.evaluate(mat_X, nargout=3)
 
-        out["F"] = np.array(f)
-        out["G"] = np.column_stack([g1, g2])
+        F = np.atleast_2d(np.array(f))
+        G = np.column_stack([g1, g2])
+
+        if self.penalty is not None:
+            out["F"] = F + (self.penalty * np.maximum(G, 0)).sum(axis=1)[:, None]
+            out["_F"] = F
+            out["_G"] = G
+        else:
+            out["F"] = F
+            out["G"] = G
 
 
 if __name__ == '__main__':

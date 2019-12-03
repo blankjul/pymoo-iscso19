@@ -1,0 +1,28 @@
+#!/bin/bash --login
+########## SBATCH Lines for Resource Request ##########
+
+#SBATCH --time=02:00:00             # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --nodes=8                   # number of different nodes - could be an exact number or a range of nodes (same as -N)
+#SBATCH --ntasks=8                  # number of tasks - how many tasks (nodes) that you require (same as -n
+#SBATCH --cpus-per-task=8           # number of CPUs (or cores) per task (same as -c)
+#SBATCH --mem-per-cpu=2G            # memory required per allocated CPU (or core) - amount of memory (in bytes)
+#SBATCH --job-name iscso19      # you can give your job a name for easier identification (same as -J)
+
+########## Command Lines to Run ##########
+
+module purge
+module load MATLAB/2019b
+
+conda activate iscso19
+
+cd /mnt/home/blankjul/workspace/pymoo-iscso19
+
+for k in {0..9}
+do
+	srun -N 1 -n 1 python iscso19/methods/ga.py $k &
+done
+
+
+scontrol show job $SLURM_JOB_ID
+
+wait
