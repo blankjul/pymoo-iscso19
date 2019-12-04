@@ -61,7 +61,7 @@ def solve(seed):
 
     res = minimize(ISCSO2019(),
                    method,
-                   termination=('n_eval', 200000),
+                   termination=('n_eval', 20),
                    seed=seed,
                    verbose=True
                    )
@@ -76,6 +76,8 @@ def solve(seed):
 
 
 if __name__ == "__main__":
+    # " ".join([str(e) for e in pop.get("X")[1].tolist()])
+
     seed = int(sys.argv[1])
     solve(seed)
 
