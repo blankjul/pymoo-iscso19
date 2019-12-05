@@ -2,6 +2,7 @@ import copy
 import os
 
 import numpy as np
+from pymoo.model.algorithm import filter_optimum
 
 from pymoo.model.callback import Callback
 
@@ -26,7 +27,12 @@ class MyCallback(Callback):
         self.folder = folder
 
     def notify(self, algorithm):
-        np.savetxt(os.path.join(self.folder, f"custom_{algorithm.seed}.status"), np.array([algorithm.n_gen]))
+        best = filter_optimum(algorithm.pop, least_infeasible=True)
+        watch = f"| Seed: {algorithm.seed} | Gen: {algorithm.n_gen} | Evals: {algorithm.evaluator.n_eval} | F min: {best.F} | F avg: {algorithm.pop.get('F').mean()} | G1 min: {best.G[0]} | G2 min: {best.G[1]} |"
+        with open(os.path.join(self.folder, f"custom_{algorithm.seed}.status"), 'w+') as fp:
+            fp.write(watch)
+
+        # np.savetxt(, np.array([algorithm.n_gen]))
 
         nth_gen = 200000 / (algorithm.pop_size * self.n_snapshots)
         if algorithm.n_gen % nth_gen == 0:
