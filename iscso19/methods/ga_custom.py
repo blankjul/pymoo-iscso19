@@ -1,49 +1,18 @@
-import copy
 import os
 import sys
-
-from pymoo.model.sampling import Sampling
-
-for home in ["/home/vesikary/", "/home/blankjul/", "/mnt/home/blankjul/workspace/"]:
-    sys.path.append(home + "pymoo-iscso19")
-
-import numpy as np
-from pymoo.factory import get_algorithm, get_crossover, get_mutation, get_sampling
-from pymoo.model.callback import Callback
-from pymoo.optimize import minimize
-
-from iscso19.problem import ISCSO2019
-from multiprocessing import Pool
 import time
 
+import numpy as np
 
-def store(history, algorithm):
-    hist, _callback = algorithm.history, algorithm.callback
-    algorithm.history, algorithm.callback = None, None
-
-    obj = copy.deepcopy(algorithm)
-    algorithm.history = hist
-    algorithm.callback = _callback
-
-    history.append(obj)
+for home in ["/home/vesikary/", "/home/blankjul/workspace/", "/mnt/home/blankjul/workspace/"]:
+    sys.path.insert(0, home + "pymoo-iscso19")
+    sys.path.insert(0, home + "pymoo")
 
 
-class MyCallback(Callback):
-
-    def __init__(self, folder, n_snapshots=1000) -> None:
-        super().__init__()
-        self.n_snapshots = n_snapshots
-        self.history = []
-        self.folder = folder
-
-
-    def notify(self, algorithm):
-        np.savetxt(os.path.join(self.folder, f"ga_{algorithm.seed}.status"), np.array([algorithm.n_gen]))
-
-        nth_gen = 200000 / (algorithm.pop_size * self.n_snapshots)
-        if algorithm.n_gen % nth_gen == 0:
-            store(self.history, algorithm)
-            np.save(os.path.join(self.folder, f"ga_{algorithm.seed}"), self.history)
+from iscso19.callback import MyCallback
+from iscso19.problem import ISCSO2019
+from pymoo.factory import get_algorithm, get_crossover, get_mutation, get_sampling
+from pymoo.optimize import minimize
 
 
 # class MySampling(Sampling):

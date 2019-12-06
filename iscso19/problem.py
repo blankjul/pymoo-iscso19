@@ -26,6 +26,8 @@ class ISCSO2019(Problem):
         out["F"] = np.atleast_2d(np.array(f))
         out["G"] = np.column_stack([g1, g2])
 
+        out["_F"], out["_G"] = out["F"], out["G"]
+
 
 if __name__ == '__main__':
 

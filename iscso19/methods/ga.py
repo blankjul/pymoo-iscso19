@@ -1,16 +1,19 @@
 import os
 import sys
+import time
 
-for home in ["/home/vesikary/", "/home/blankjul/", "/mnt/home/blankjul/workspace/"]:
-    sys.path.append(home + "pymoo-iscso19")
+import numpy as np
+
+for home in ["/home/vesikary/", "/home/blankjul/workspace/", "/mnt/home/blankjul/workspace/"]:
+    sys.path.insert(0, home + "pymoo-iscso19")
+    sys.path.insert(0, home + "pymoo")
+
+
 
 from iscso19.callback import MyCallback
-import numpy as np
+from iscso19.problem import ISCSO2019
 from pymoo.factory import get_algorithm, get_crossover, get_mutation, get_sampling
 from pymoo.optimize import minimize
-
-from iscso19.problem import ISCSO2019
-import time
 
 
 def solve(seed):

@@ -1,20 +1,19 @@
 import os
 import sys
+import time
 
+import numpy as np
 
-for home in ["/home/vesikary/", "/home/blankjul/", "/mnt/home/blankjul/workspace/"]:
-    sys.path.append(home + "pymoo-iscso19")
+for home in ["/home/vesikary/", "/home/blankjul/workspace/", "/mnt/home/blankjul/workspace/"]:
+    sys.path.insert(0, home + "pymoo-iscso19")
+    sys.path.insert(0, home + "pymoo")
 
 
 from iscso19.callback import MyCallback
-from pymoo.algorithms.so_cmaes import CMAES, CMAESDisplay
-from pymoo.util.normalization import normalize
-
-import numpy as np
-from pymoo.optimize import minimize
-
 from iscso19.problem import ISCSO2019
-import time
+from pymoo.algorithms.so_cmaes import CMAES, CMAESDisplay
+from pymoo.optimize import minimize
+from pymoo.util.normalization import normalize
 
 
 class MyDisplay(CMAESDisplay):

@@ -28,7 +28,6 @@ class MyCallback(Callback):
     def notify(self, algorithm):
         np.savetxt(os.path.join(self.folder, f"custom_{algorithm.seed}.status"), np.array([algorithm.n_gen]))
 
-        nth_gen = 200000 / (algorithm.pop_size * self.n_snapshots)
-        if algorithm.n_gen % nth_gen == 0:
+        if algorithm.n_gen % 200 == 0:
             store(self.history, algorithm)
             np.save(os.path.join(self.folder, f"custom_{algorithm.seed}"), self.history)
