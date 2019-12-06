@@ -9,7 +9,6 @@ for home in ["/home/vesikary/", "/home/blankjul/workspace/", "/mnt/home/blankjul
     sys.path.insert(0, home + "pymoo")
 
 
-
 from iscso19.callback import MyCallback
 from iscso19.problem import ISCSO2019
 from pymoo.factory import get_algorithm, get_crossover, get_mutation, get_sampling
@@ -23,7 +22,7 @@ def solve(seed):
 
     start = time.time()
     method = get_algorithm("ga",
-                           pop_size=20,
+                           pop_size=100,
                            sampling=get_sampling("int_random"),
                            crossover=get_crossover("int_sbx", prob=1.0, eta=3.0),
                            mutation=get_mutation("int_pm", eta=3.0),
@@ -33,7 +32,7 @@ def solve(seed):
 
     res = minimize(ISCSO2019(),
                    method,
-                   termination=('n_eval', 20),
+                   termination=('n_eval', 200000),
                    seed=seed,
                    verbose=True
                    )
@@ -48,7 +47,6 @@ def solve(seed):
 
 
 if __name__ == "__main__":
-    # " ".join([str(e) for e in pop.get("X")[1].tolist()])
 
     seed = int(sys.argv[1])
     solve(seed)
