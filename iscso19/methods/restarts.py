@@ -62,10 +62,10 @@ class MyGeneticAlgorithm(GA):
         super().__init__(**kwargs)
         self.no_improvement = 0
 
-    def _initialize(self):
+    def _initialize_disabled(self):
 
         # first just explore with 1000 solutions to find some that are not too infeasible
-        pop = get_sampling("int_random").do(self.problem, 5000)
+        pop = get_sampling("int_random").do(self.problem, 1000)
         self.evaluator.eval(self.problem, pop, algorithm=self)
         self.pop = FitnessSurvival().do(self.problem, pop, 5)
         self._each_iteration(self)
@@ -75,7 +75,7 @@ class MyGeneticAlgorithm(GA):
         # for each of the top solutions find now some that are indeed feasible
         for ind in self.pop:
 
-            ga = GA(pop_size=50,
+            ga = GA(pop_size=100,
                     sampling=BiasedSampling(ind.X, 0.2),
                     crossover=get_crossover("int_sbx", prob=1.0, eta=3.0),
                     mutation=get_mutation("int_pm", eta=3.0),
@@ -98,8 +98,9 @@ class MyGeneticAlgorithm(GA):
         self.pop = best
 
     def next(self):
-        if self.no_improvement > 10:
-            self.pop_size = min(200, int(self.pop_size + self.pop_size // 2))
+        if self.no_improvement > 100:
+            # self.pop_size = min(200, int(self.pop_size + self.pop_size // 2))
+            
             self.pop = BiasedSampling(self.opt.X, 0.2).do(self.problem, self.pop_size)
             self.evaluator.eval(self.problem, self.pop, algorithm=self)
             self.no_improvement = -1
@@ -126,11 +127,12 @@ def solve(seed):
 
     start = time.time()
     method = MyGeneticAlgorithm(
-        pop_size=20,
+        pop_size=100,
+        sampling=get_sampling("int_random"),
         crossover=get_crossover("int_sbx", prob=1.0, eta=3.0),
         mutation=get_mutation("int_pm", eta=3.0),
         eliminate_duplicates=True,
-        callback=MyCallback(folder),
+        callback=MyCallback(folder, name="restarts_only"),
         display=RestartDisplay()
     )
 
@@ -143,9 +145,9 @@ def solve(seed):
     end = time.time()
     elapsed = end - start
 
-    np.savetxt(os.path.join(folder, f"custom_{seed}.x"), res.pop.get("X").astype(np.int))
-    np.savetxt(os.path.join(folder, f"custom_{seed}.f"), res.pop.get("F"))
-    np.savetxt(os.path.join(folder, f"custom_{seed}.g"), res.pop.get("G"))
+    np.savetxt(os.path.join(folder, f"restarts_only_{seed}.x"), res.pop.get("X").astype(np.int))
+    np.savetxt(os.path.join(folder, f"restarts_only_{seed}.f"), res.pop.get("F"))
+    np.savetxt(os.path.join(folder, f"restarts_only_{seed}.g"), res.pop.get("G"))
 
     print(f"Finished seed {seed} - runtime: {elapsed}")
 

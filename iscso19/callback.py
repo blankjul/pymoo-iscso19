@@ -20,9 +20,9 @@ def store(history, algorithm):
 
 class MyCallback(Callback):
 
-    def __init__(self, folder, n_snapshots=1000) -> None:
+    def __init__(self, folder, name="ga") -> None:
         super().__init__()
-        self.n_snapshots = n_snapshots
+        self.name = name
         self.history = []
         self.folder = folder
 
@@ -30,10 +30,8 @@ class MyCallback(Callback):
         best = filter_optimum(algorithm.pop, least_infeasible=True)
         watch = f"| Seed: {algorithm.seed} | Gen: {algorithm.n_gen} | Evals: {algorithm.evaluator.n_eval} | F min: {best.F} | F avg: {algorithm.pop.get('F').mean()} | G1 min: {best.G[0]} | G2 min: {best.G[1]} |"
         with open(os.path.join(self.folder, f"custom_{algorithm.seed}.status"), 'w+') as fp:
-            fp.write(watch)
+            fp.write(watch + "\n")
 
-        # np.savetxt(, np.array([algorithm.n_gen]))
-
-        if algorithm.n_gen % 200 == 0:
+        if algorithm.n_gen % 100 == 0:
             store(self.history, algorithm)
-            np.save(os.path.join(self.folder, f"custom_{algorithm.seed}"), self.history)
+            np.save(os.path.join(self.folder, f"{self.name}_{algorithm.seed}"), self.history)
