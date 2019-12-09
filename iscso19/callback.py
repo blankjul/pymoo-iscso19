@@ -29,7 +29,7 @@ class MyCallback(Callback):
     def notify(self, algorithm):
         best = filter_optimum(algorithm.pop, least_infeasible=True)
         watch = f"| Seed: {algorithm.seed} | Gen: {algorithm.n_gen} | Evals: {algorithm.evaluator.n_eval} | F min: {best.F} | F avg: {algorithm.pop.get('F').mean()} | G1 min: {best.G[0]} | G2 min: {best.G[1]} |"
-        with open(os.path.join(self.folder, f"custom_{algorithm.seed}.status"), 'w+') as fp:
+        with open(os.path.join(self.folder, f"{self.name}_{algorithm.seed}.status"), 'w+') as fp:
             fp.write(watch + "\n")
 
         if algorithm.n_gen % 100 == 0:
